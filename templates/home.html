@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="display-4">Welcome to the Vehicle Parking App</h1>
+    <p class="lead">Manage parking lots - Admin or user</p>
+
+    {% if not session.get('role') %}
+        <div class="mt-4">
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg mx-2">Login</a>
+            <a href="{{ url_for('register') }}" class="btn btn-success btn-lg mx-2">Register</a>
+        </div>
+    {% elif session.get('role') == 'admin' %}
+        <div class="mt-4">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-warning btn-lg">Go to Admin Dashboard</a>
+        </div>
+    {% elif session.get('role') == 'user' %}
+        <div class="mt-4">
+            <a href="{{ url_for('user.dashboard') }}" class="btn btn-info btn-lg">Go to User Dashboard</a>
+        </div>
+    {% endif %}
+
+    <hr class="my-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h4>What you can do:</h4>
+            <ul class="list-group list-group-flush text-start mt-3">
+                <li class="list-group-item">Admins can create and manage parking lots</li>
+                <li class="list-group-item">Users can park and release their vehicles</li>
+                <li class="list-group-item">Admins can track parking activity and generate reports</li>
+                <li class="list-group-item">Easy login and registration system</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
