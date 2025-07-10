@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Parked Vehicle Status</h2>
+
+    {% if vehicles %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User</th>
+                        <th>Parking Lot</th>
+                        <th>Spot Number</th>
+                        <th>Vehicle Number</th> 
+                        <th>Time In</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vehicle in vehicles %}
+                    <tr>
+                        <td>{{ vehicle.username }}</td>
+                        <td>{{ vehicle.lot_name }}</td>
+                        <td>{{ vehicle.spot_number }}</td>
+                        <td>{{ vehicle.vehicle_number }}</td> 
+                        <td>{{ vehicle.start_time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No vehicles currently parked.
+        </div>
+    {% endif %}
+
+    <hr class="my-4">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary mt-3">← Back to Admin Dashboard</a>
+</div>
+{% endblock %}
+

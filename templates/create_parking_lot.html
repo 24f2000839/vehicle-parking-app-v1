@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Create Parking Lot - Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.create_parking_lot') }}">
+                    <div class="mb-3">
+                        <label for="prime_location_name" class="form-label">Prime Location Name</label>
+                        <input type="text" class="form-control" id="prime_location_name" name="prime_location_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price_per_hour" class="form-label">Price Per Hour ($)</label>
+                        <input type="number" step="0.01" class="form-control" id="price_per_hour" name="price_per_hour" min="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pin_code" class="form-label">Pin Code</label>
+                        <input type="text" class="form-control" id="pin_code" name="pin_code">
+                    </div>
+                    <div class="mb-3">
+                        <label for="maximum_number_of_spots" class="form-label">Maximum Number of Spots (4-wheeler)</label>
+                        <input type="number" class="form-control" id="maximum_number_of_spots" name="maximum_number_of_spots" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save"></i> Create Parking Lot</button>
+                    <a href="{{ url_for('admin.list_parking_lots') }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
