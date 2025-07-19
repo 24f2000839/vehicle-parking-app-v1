@@ -5,22 +5,11 @@ from models.parking_spot import ParkingSpot
 from models.reservation import Reservation
 from models.user import User
 from datetime import datetime
-from sqlalchemy.orm import joinedload # For efficient querying
-from functools import wraps
+from sqlalchemy.orm import joinedload
 
 user_bp = Blueprint('user', __name__)
 
-def user_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if session.get('logged_in_as') != 'user' or not session.get('user_id'):
-            flash('Access denied. Please log in as a user.', 'danger')
-            return redirect(url_for('auth.login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
 @user_bp.route('/dashboard')
-@user_required
 def user_dashboard():
     user_id = session['user_id']
     active_reservations = Reservation.query.filter_by(user_id=user_id, leaving_timestamp=None).all()
@@ -29,7 +18,11 @@ def user_dashboard():
         Reservation.leaving_timestamp.isnot(None)
     ).order_by(Reservation.leaving_timestamp.desc()).all()
 
-    total_cost_past = sum(r.parking_cost for r in past_reservations if r.parking_cost is not None)
+    total_cost_past = 0
+    for r in past_reservations:
+        if r.parking_cost is not None:
+            total_cost_past += r.parking_cost
+
     num_past_reservations = len(past_reservations)
 
     return render_template('user_dashboard.html',
@@ -39,7 +32,6 @@ def user_dashboard():
                            num_past_reservations=num_past_reservations)
 
 @user_bp.route('/available_lots')
-@user_required
 def available_lots():
     available_parking_lots = ParkingLot.query.join(ParkingSpot).filter(ParkingSpot.status == 'A').distinct().all()
 
@@ -58,9 +50,10 @@ def available_lots():
                            num_past_reservations=num_past_reservations)
 
 @user_bp.route('/book_spot/<int:lot_id>', methods=['POST'])
-@user_required
 def book_spot(lot_id):
     user_id = session['user_id']
+    user = User.query.get(user_id) 
+
     if not user:
         flash('User not found. Please log in again.', 'danger')
         return redirect(url_for('auth.login'))
@@ -86,9 +79,9 @@ def book_spot(lot_id):
         new_reservation = Reservation(
             spot_id=available_spot.id,
             user_id=user_id,
-            parking_timestamp=datetime.utcnow(), # Records current time
-            license_plate=license_plate, # Save license plate
-            vehicle_make_model=vehicle_make_model # Save vehicle make/model
+            parking_timestamp=datetime.utcnow(), 
+            license_plate=license_plate,
+            vehicle_make_model=vehicle_make_model
         )
         db.session.add(new_reservation)
         db.session.commit()
@@ -99,7 +92,6 @@ def book_spot(lot_id):
         return redirect(url_for('user.available_lots'))
 
 @user_bp.route('/release_spot/<int:reservation_id>', methods=['POST'])
-@user_required
 def release_spot(reservation_id):
     user_id = session['user_id']
     reservation = Reservation.query.filter_by(id=reservation_id, user_id=user_id, leaving_timestamp=None).first()
@@ -108,15 +100,20 @@ def release_spot(reservation_id):
         flash('Active reservation not found or already released.', 'danger')
         return redirect(url_for('user.user_dashboard'))
 
-    reservation.leaving_timestamp = datetime.utcnow()
+    reservation.leaving_timestamp = datetime.utcnow() 
 
     parking_spot = reservation.parking_spot
     parking_lot = parking_spot.parking_lot
 
+    duration_seconds = (reservation.leaving_timestamp - reservation.parking_timestamp).total_seconds()
+    duration_hours = duration_seconds / 3600.0
+
     if duration_hours < 1 and duration_hours > 0:
-        actual_charge_hours = 1.0 # Minimum 1 hour charge
+        actual_charge_hours = 1.0 
+    elif duration_hours <= 0:
+        actual_charge_hours = 0.0
     else:
-        actual_charge_hours = duration_hours # Charge based on actual hours
+        actual_charge_hours = duration_hours
 
     reservation.parking_cost = actual_charge_hours * parking_lot.price_per_hour
     db.session.add(reservation)
@@ -125,12 +122,11 @@ def release_spot(reservation_id):
     db.session.add(parking_spot)
 
     db.session.commit()
-    flash(f'Spot released. Total cost: ${reservation.parking_cost}. Duration: {duration_hours} hours.', 'success')
+    flash(f'Spot released. Total cost: ${reservation.parking_cost:.2f}. Duration: {duration_hours:.2f} hours.', 'success')
     return redirect(url_for('user.user_dashboard'))
 
 @user_bp.route('/summary_charts')
-@user_required
 def user_summary_charts():
     flash('This is a placeholder for user summary charts. Implement charting logic here.', 'info')
-    return redirect(url_for('user.user_dashboard')) # Redirect or render a specific chart page
+    return redirect(url_for('user.user_dashboard'))
 
