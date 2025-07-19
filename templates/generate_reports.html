@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Parking Usage Reports</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Parking Lots</h5>
+                    <p class="card-text display-6">{{ report.total_lots }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Currently Parked Vehicles</h5>
+                    <p class="card-text display-6">{{ report.vehicles_parked }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Available Spots</h5>
+                    <p class="card-text display-6">{{ report.available_spots }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Lot-wise Usage</h4>
+    {% if report.lot_stats %}
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Lot Name</th>
+                    <th>Total Spots</th>
+                    <th>Occupied</th>
+                    <th>Available</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lot in report.lot_stats %}
+                <tr>
+                    <td>{{ lot.name }}</td>
+                    <td>{{ lot.total_spots }}</td> {# Corrected from lot.total to lot.total_spots #}
+                    <td>{{ lot.occupied }}</td>
+                    <td>{{ lot.total_spots - lot.occupied }}</td> {# Corrected from lot.total to lot.total_spots #}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">No parking lot data available.</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('admin.download_report') }}"> {# Corrected URL #}
+        <button type="submit" class="btn btn-outline-secondary mt-3">Download CSV Report</button>
+    </form>
+</div>
+{% endblock %}
+
