@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Admin{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Registered Users</h1>
+
+{% if users %}
+<div class="card">
+    <div class="card-body">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Registered</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.id | string }} <!-- Placeholder, normally you'd have a creation timestamp --></td>
+                    <td>
+                        <!-- Add actions like view user reservations or delete user (with caution) -->
+                        <button class="btn btn-sm btn-warning" disabled title="Not implemented">View Reservations</button>
+                        <button class="btn btn-sm btn-danger" disabled title="Not implemented">Delete User</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+    <div class="alert alert-info" role="alert">
+        No regular users registered yet.
+    </div>
+{% endif %}
+{% endblock %}
+
