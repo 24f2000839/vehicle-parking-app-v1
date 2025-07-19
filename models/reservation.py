@@ -1,6 +1,9 @@
 from models import db
 from datetime import datetime
 
+from .user import User
+from .parking_spot import ParkingSpot
+
 class Reservation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spot_id = db.Column(db.Integer, db.ForeignKey('parking_spot.id'), nullable=False)
@@ -17,3 +20,4 @@ class Reservation(db.Model):
 
     def __repr__(self):
         return f'<Reservation {self.id} | User: {self.user_id} | Spot: {self.spot_id} | Plate: {self.license_plate}>'
+
