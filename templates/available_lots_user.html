@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Available Parking Lots - User{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Available Parking Lots</h1>
+
+{% if parking_lots %}
+<div class="row">
+    {% for lot in parking_lots %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">{{ lot.prime_location_name }}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Address:</strong> {{ lot.address or 'N/A' }}</p>
+                <p><strong>Pin Code:</strong> {{ lot.pin_code or 'N/A' }}</p>
+                <p><strong>Price Per Hour:</strong> <span class="badge bg-info">${{ '%.2f'|format(lot.price_per_hour) }}</span></p>
+
+                {% set available_spots_count = lot.spots | selectattr('status', 'eq', 'A') | list | length %}
+                <p><strong>Available Spots:</strong>
+                    <span class="badge {% if available_spots_count > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                        {{ available_spots_count }} / {{ lot.maximum_number_of_spots }}
+                    </span>
+                </p>
+
+                {% if available_spots_count > 0 %}
+                    <form action="{{ url_for('user.book_spot', lot_id=lot.id) }}" method="POST">
+                        <div class="mb-3">
+                            <label for="license_plate_{{ lot.id }}" class="form-label">Vehicle License Plate</label>
+                            <input type="text" class="form-control" id="license_plate_{{ lot.id }}" name="license_plate" placeholder="e.g., ABC-1234" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicle_make_model_{{ lot.id }}" class="form-label">Vehicle Make/Model (Optional)</label>
+                            <input type="text" class="form-control" id="vehicle_make_model_{{ lot.id }}" name="vehicle_make_model" placeholder="e.g., Toyota Camry">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-2">
+                            <i class="fas fa-car"></i> Book a Spot in this Lot
+                        </button>
+                    </form>
+                {% else %}
+                    <button class="btn btn-secondary w-100" disabled>No Spots Available</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <div class="alert alert-info" role="alert">
+        No parking lots with available spots at the moment. Please check back later!
+    </div>
+{% endif %}
+{% endblock %}
+
