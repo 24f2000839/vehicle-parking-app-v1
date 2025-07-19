@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Parking Lot</title>
-</head>
-<body>
-    <h1>Parking Lot</h1>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Home - Parking App{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 mb-4">Welcome to the Vehicle Parking App!</h1>
+        <p class="lead">Let's manage parking lots, spots, and reservations in one place!</p>
+        <hr class="my-4">
+        <p>Please log in or register to get started.</p>
+        <div class="mt-4">
+            {% if not current_user and not is_admin %}
+            <a class="btn btn-primary btn-lg me-2" href="{{ url_for('auth.login') }}" role="button">Login</a>
+            <a class="btn btn-success btn-lg" href="{{ url_for('auth.register') }}" role="button">Register</a>
+            {% else %}
+                {% if is_admin %}
+                <p>You are logged in as Admin.</p>
+                <a class="btn btn-primary btn-lg" href="{{ url_for('admin.admin_dashboard') }}" role="button">Go to Admin Dashboard</a>
+                {% else %}
+                <p>You are logged in as {{ current_user.username }}.</p>
+                <a class="btn btn-primary btn-lg" href="{{ url_for('user.user_dashboard') }}" role="button">Go to My Dashboard</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
