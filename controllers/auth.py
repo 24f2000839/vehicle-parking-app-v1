@@ -36,7 +36,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        if username == 'admin' and password == 'password':
+        if username == 'admin' and password == 'admin':
             session['logged_in_as'] = 'admin'
             flash('Admin login successful!', 'success')
             return redirect(url_for('admin.admin_dashboard'))
