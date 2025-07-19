@@ -18,7 +18,7 @@
                     <p><strong>Spot Number:</strong> {{ reservation.parking_spot.spot_number }}</p>
                     <p><strong>Vehicle:</strong> {{ reservation.license_plate }} {% if reservation.vehicle_make_model %}({{ reservation.vehicle_make_model }}){% endif %}</p>
                     <p><strong>Parking Time:</strong> {{ reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-                    <p><strong>Price Per Hour:</strong> ${{ '%.2f'|format(reservation.parking_spot.parking_lot.price_per_hour) }}</p>
+                    <p><strong>Price Per Hour:</strong> INR{{ '%.2f'|format(reservation.parking_spot.parking_lot.price_per_hour) }}</p>
                     <form action="{{ url_for('user.release_spot', reservation_id=reservation.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to release this spot?');">
                         <button type="submit" class="btn btn-danger"><i class="fas fa-car-side"></i> Release Spot</button>
                     </form>
@@ -37,9 +37,9 @@
             </div>
             <div class="card-body">
                 <p><strong>Total Past Reservations:</strong> {{ num_past_reservations }}</p>
-                <p><strong>Total Parking Cost:</strong> ${{ '%.2f'|format(total_cost_past) }}</p>
+                <p><strong>Total Parking Cost:</strong> INR {{ '%.2f'|format(total_cost_past) }}</p>
                 <!-- Placeholder for user specific chart -->
-                <p>This area could display charts summarizing your parking habits and costs.</p>
+                <p>{{ current_user.username }} Parking Spots</p>
                 <canvas id="userSummaryChart" width="400" height="200"></canvas>
             </div>
         </div>
@@ -86,7 +86,7 @@
                                         N/A
                                     {% endif %}
                                 </td>
-                                <td>${{ '%.2f'|format(res.parking_cost) if res.parking_cost is not none else 'N/A' }}</td>
+                                <td>INR {{ '%.2f'|format(res.parking_cost) if res.parking_cost is not none else 'N/A' }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
