@@ -11,7 +11,7 @@
                         <th>User</th>
                         <th>Parking Lot</th>
                         <th>Spot Number</th>
-                        <th>Vehicle Number</th> 
+                        <th>Vehicle Number</th> {# Assuming this field will be added to Reservation or passed from backend #}
                         <th>Time In</th>
                     </tr>
                 </thead>
@@ -21,7 +21,7 @@
                         <td>{{ vehicle.username }}</td>
                         <td>{{ vehicle.lot_name }}</td>
                         <td>{{ vehicle.spot_number }}</td>
-                        <td>{{ vehicle.vehicle_number }}</td> 
+                        <td>{{ vehicle.vehicle_number }}</td> {# This will be 'N/A' if not implemented in backend yet #}
                         <td>{{ vehicle.start_time }}</td>
                     </tr>
                     {% endfor %}
