@@ -59,11 +59,12 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header bg-light">
-                <h4 class="mb-0">Spot Status Summary (Placeholder for Chart)</h4>
+                <h4 class="mb-0">Spot Status Summary</h4>
             </div>
             <div class="card-body">
-                <p>This area would display charts (e.g., using Chart.js) visualizing parking spot availability.</p>
-                <canvas id="spotStatusChart" width="400" height="200"></canvas>
+                <div style="width: 50%; margin: auto;">
+                    <canvas id="spotStatusChart" width="200" height="100" style="max-width: 100%; height: auto;"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -101,4 +102,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
-
